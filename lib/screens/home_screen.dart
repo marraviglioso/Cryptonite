@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:convert';
 import 'package:cryptonite/models/coin.dart';
-import 'package:cryptonite/screens/about_page.dart';
 import 'package:cryptonite/widgets/design/coin_card_design.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
 
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   bool isdataLoaded = false;
@@ -30,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       List<dynamic> values = [];
       values = json.decode(response.body);
-      if (values.length > 0) {
+      if (values.isNotEmpty) {
         for (int i = 0; i < values.length; i++) {
           if (values[i] != null) {
             Map<String, dynamic> map = values[i];
@@ -38,23 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
       }
-      count();
+      setState(() {});
       return coinList;
     } else {
       throw Exception('Failed to load coins');
     }
   }
 
-  void count() {
-    if (isdataLoaded = true) {
-      setState(() {});
-    } else {}
-  }
+
 
   @override
   void initState() {
     fetchCoin();
-    Timer.periodic(const Duration(seconds: 120), (timer) => fetchCoin());
+    Timer.periodic(const Duration(seconds: 20), (timer) => fetchCoin());
     super.initState();
   }
 
@@ -113,16 +104,16 @@ class _HomeScreenState extends State<HomeScreen> {
         animatedIcon: AnimatedIcons.menu_close,
         openCloseDial: isDialOpen,
         backgroundColor: Colors.deepPurple,
-        overlayColor: Colors.white,
-        overlayOpacity: 0.1,
-        spacing: 5,
-        spaceBetweenChildren: 5,
+        overlayColor: Colors.deepPurple[200],
+        overlayOpacity: 0.6,
+        spacing: 8,
+        spaceBetweenChildren: 10,
         closeManually: false,
         children: [
           SpeedDialChild(
               child: const Icon(Icons.percent_rounded),
               label: 'Sort by percentage',
-              backgroundColor: Color.fromARGB(255, 255, 255, 255),
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
               onTap: () {
                 setState(() {
                   coinList.sort((a, b) =>
@@ -148,56 +139,62 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: CustomScrollView(
-        slivers: <Widget>[
-          const SliverAppBar(
-            title: Text('C R Y P T O N I T E'),
-            backgroundColor: Colors.deepPurple,
-            floating: false,
-            pinned: false,
-            centerTitle: true,
-            expandedHeight: 90,
-            stretch: true,
-            flexibleSpace: FlexibleSpaceBar(),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              color: Colors.deepPurple,
-              height: 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    height: 20,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
+      body:  CustomScrollView(
+             physics:
+            const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: <Widget>[
+            const SliverAppBar(
+              title: Text('C R Y P T O N I T E'),
+              backgroundColor: Colors.deepPurple,
+              floating: false,
+              pinned: false,
+              centerTitle: true,
+              expandedHeight: 90,
+              stretch: true,
+              flexibleSpace: FlexibleSpaceBar(),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                color: Colors.deepPurple,
+                height: 25,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      height: 25,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0),
+                       ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return CoinCardDesign(
-                  name: coinList[index].name,
-                  symbol: coinList[index].symbol,
-                  imageUrl: coinList[index].imageUrl,
-                  price: coinList[index].price.toDouble(),
-                  change: coinList[index].change.toDouble(),
-                  changePercentage: coinList[index].changePercentage.toDouble(),
-                );
-              },
-              childCount: coinList.length,
-            ),
-          )
-        ],
-      ),
+      
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return CoinCardDesign(
+                    name: coinList[index].name,
+                    symbol: coinList[index].symbol,
+                    imageUrl: coinList[index].imageUrl,
+                    price: coinList[index].price.toDouble(),
+                    change: coinList[index].change.toDouble(),
+                    changePercentage: coinList[index].changePercentage.toDouble(),
+                  );
+                },
+                childCount: coinList.length,
+              ),
+            ) 
+          ],
+
+        ),
     );
   }
 }
+
+// TODO: need to fix appbar
