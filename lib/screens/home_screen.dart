@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:cryptonite/models/coin.dart';
 import 'package:cryptonite/widgets/design/coin_card_design.dart';
+import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -14,7 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   bool isdataLoaded = false;
   Future<List<Coin>> fetchCoin() async {
@@ -33,14 +33,28 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
       }
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
       return coinList;
     } else {
       throw Exception('Failed to load coins');
     }
   }
 
+  String greetingMessage() {
+    var timeNow = DateTime.now().hour;
 
+    if (timeNow <= 12) {
+      return 'Good Morning ✨';
+    } else if ((timeNow > 12) && (timeNow <= 16)) {
+      return 'Good Afternoon 😎';
+    } else if ((timeNow > 16) && (timeNow < 20)) {
+      return 'Good Evening 🌙';
+    } else {
+      return 'Good Night 🌝';
+    }
+  }
 
   @override
   void initState() {
@@ -59,47 +73,59 @@ class _HomeScreenState extends State<HomeScreen> {
         return true;
       }
     };
-    return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.deepPurple,
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/media/menu.png',
+    return DraggableHome(
+      alwaysShowLeadingAndAction: true,
+      title: const Text('C R Y P T O N I T E'),
+      stretchMaxHeight: 0.50,
+      headerWidget: headerWidget(context),
+      body: [
+        listView(),
+      ],
+      drawer: SafeArea(
+        child: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple,
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/media/menu.png',
+                    ),
+                    fit: BoxFit.contain,
                   ),
-                  fit: BoxFit.contain,
                 ),
+                child: null,
               ),
-              child: null,
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.home,
+              ListTile(
+                leading: const Icon(
+                  Icons.home,
+                ),
+                title: const Text('Homepage'),
+                onTap: () {
+                  Navigator.pop(
+                    context,
+                  );
+                },
               ),
-              title: const Text('Homepage'),
-              onTap: () {
-                Navigator.pop(
-                  context,
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.bug_report_rounded,
+              ListTile(
+                leading: const Icon(
+                  Icons.bug_report_rounded,
+                ),
+                title: const Text('Report bugs'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/about');
+                },
               ),
-              title: const Text('Report bugs'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/about');
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      fullyStretchable: false,
+      backgroundColor: Colors.white,
+      appBarColor: Colors.deepPurple,
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         openCloseDial: isDialOpen,
@@ -138,63 +164,47 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body:  CustomScrollView(
-             physics:
-            const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-          slivers: <Widget>[
-            const SliverAppBar(
-              title: Text('C R Y P T O N I T E'),
-              backgroundColor: Colors.deepPurple,
-              floating: false,
-              pinned: false,
-              centerTitle: true,
-              expandedHeight: 90,
-              stretch: true,
-              flexibleSpace: FlexibleSpaceBar(),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                color: Colors.deepPurple,
-                height: 25,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Container(
-                      height: 25,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30.0),
-                          topRight: Radius.circular(30.0),
-                       ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-      
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return CoinCardDesign(
-                    name: coinList[index].name,
-                    symbol: coinList[index].symbol,
-                    imageUrl: coinList[index].imageUrl,
-                    price: coinList[index].price.toDouble(),
-                    change: coinList[index].change.toDouble(),
-                    changePercentage: coinList[index].changePercentage.toDouble(),
-                  );
-                },
-                childCount: coinList.length,
-              ),
-            ) 
-          ],
+    );
+  }
 
-        ),
+  ListView listView() {
+    return ListView.builder(
+      padding: const EdgeInsets.only(top: 0),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: coinList.length,
+      itemBuilder: (context, index) {
+        return CoinCardDesign(
+          name: coinList[index].name,
+          symbol: coinList[index].symbol,
+          imageUrl: coinList[index].imageUrl,
+          price: coinList[index].price.toDouble(),
+          change: coinList[index].change.toDouble(),
+          changePercentage: coinList[index].changePercentage.toDouble(),
+        );
+      },
+    );
+  }
+
+  Widget headerWidget(BuildContext context) {
+    return Container(
+      color: Colors.deepPurple,
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0),
+            child: Align(
+              child: Text(
+                greetingMessage(),
+                style: const TextStyle(color: Colors.white, fontSize: 38),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-// TODO: need to fix appbar
+
+// TODO: Need new cards inside headerWidgets, maybe nft page

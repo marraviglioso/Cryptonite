@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-
 class AboutScreen extends StatelessWidget {
+  const AboutScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     // ignore: unnecessary_new
@@ -84,7 +85,7 @@ class AboutScreen extends StatelessWidget {
               child: Container(
                 color: Colors.white,
                 height: 250,
-                child: Image(image: AssetImage('assets/media/about.png')),
+                child: const Image(image: AssetImage('assets/media/about.png')),
               ),
             ),
           ),
@@ -108,7 +109,8 @@ class AboutScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 25),
                     ),
                   ),
-                  Text('Please contact the author: "Marraviglioso" on Github')
+                  const Text(
+                      'Please contact the author: "Marraviglioso" on Github')
                 ],
               ),
             ),

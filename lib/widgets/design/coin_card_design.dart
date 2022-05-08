@@ -27,20 +27,25 @@ class CoinCardDesign extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           color: changePercentage.toDouble() < 0
-              ? Color.fromARGB(255, 235, 207, 228)
-              : Color.fromARGB(255, 200, 233, 220),
+              ? const Color.fromARGB(255, 235, 207, 228)
+              : const Color.fromARGB(255, 200, 233, 220),
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
           children: [
             Padding(
               padding: const EdgeInsets.all(10),
-              child: Container(
+              child: SizedBox(
                 height: 60,
                 width: 60,
                 child: Padding(
                   padding: const EdgeInsets.all(2),
-                  child: Image.network(imageUrl),
+                  child: Image.network(
+                    imageUrl,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(Icons.error);
+                    },
+                  ),
                 ),
               ),
             ),
