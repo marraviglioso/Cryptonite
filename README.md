@@ -9,7 +9,7 @@ Made with Flutter framework.
 
 ## Demo
 
-![](https://github.com/marraviglioso/Cryptonite/readme/screen.gif)
+![](https://raw.githubusercontent.com/marraviglioso/Cryptonite/main/readme/screen.gif)
 
 
 
