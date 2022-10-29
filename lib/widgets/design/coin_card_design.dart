@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -39,14 +40,19 @@ class CoinCardDesign extends StatelessWidget {
                 height: 60,
                 width: 60,
                 child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Image.network(
-                    imageUrl,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.error);
-                    },
-                  ),
-                ),
+                    padding: const EdgeInsets.all(2),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const Padding(
+                        padding: EdgeInsets.all(18.0),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.purple),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.person,
+                      ),
+                    )),
               ),
             ),
             Expanded(
