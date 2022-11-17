@@ -25,16 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       List<dynamic> values = [];
       values = json.decode(response.body);
-      if (values.isNotEmpty) {
-        for (int i = 0; i < values.length; i++) {
-          if (values[i] != null) {
-            Map<String, dynamic> map = values[i];
-            coinList.add(Coin.fromJson(map));
+      if (values.isNotEmpty && mounted) {
+        setState(() {
+          for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+              Map<String, dynamic> map = values[i];
+              coinList.add(Coin.fromJson(map));
+            }
           }
-        }
-      }
-      if (mounted) {
-        setState(() {});
+        });
       }
       return coinList;
     } else {

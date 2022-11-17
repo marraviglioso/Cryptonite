@@ -97,7 +97,7 @@ class CoinCardDesign extends StatelessWidget {
                 children: [
                   Text(
                     //price
-                    '\$' + price.toDouble().toStringAsFixed(3),
+                    '\$${price.toDouble().toStringAsFixed(3)}',
                     style: TextStyle(
                         color: Colors.grey[900],
                         fontSize: 20,
@@ -107,7 +107,7 @@ class CoinCardDesign extends StatelessWidget {
                     //var price
                     change.toDouble() < 0
                         ? change.toDouble().toStringAsFixed(3)
-                        : '+' + change.toDouble().toStringAsFixed(3),
+                        : '+${change.toDouble().toStringAsFixed(3)}',
                     style: TextStyle(
                       color: change.toDouble() < 0 ? Colors.red : Colors.green,
                       fontSize: 15,
@@ -117,10 +117,8 @@ class CoinCardDesign extends StatelessWidget {
                   Text(
                     //percentage var
                     changePercentage.toDouble() < 0
-                        ? changePercentage.toDouble().toStringAsFixed(2) + '%'
-                        : '+' +
-                            changePercentage.toDouble().toStringAsFixed(2) +
-                            '%',
+                        ? '${changePercentage.toDouble().toStringAsFixed(2)}%'
+                        : '+${changePercentage.toDouble().toStringAsFixed(2)}%',
                     style: TextStyle(
                       color: changePercentage.toDouble() < 0
                           ? Colors.red
